@@ -1,0 +1,7 @@
+/target/
+/preview/target/
+/.env
+/node_modules/
+/test-results/
+/playwright-report/
+*.log

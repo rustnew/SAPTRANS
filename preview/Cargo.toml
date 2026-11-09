@@ -1,0 +1,18 @@
+[package]
+name = "saptrans-preview"
+version = "0.1.0"
+edition = "2024"
+
+[features]
+ssr = []
+
+[lib]
+path = "../src/lib.rs"
+
+[dependencies]
+leptos = { version = "0.8.23", features = ["ssr"] }
+serde = { version = "1", features = ["derive"] }
+
+[[bin]]
+name = "saptrans-preview"
+path = "main.rs"

@@ -1,0 +1,40 @@
+[package]
+name = "saptrans"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "saptrans-server"
+path = "src/bin/server.rs"
+required-features = ["ssr"]
+
+[features]
+default = ["ssr"]
+ssr = ["leptos/ssr", "dep:actix-web", "dep:sqlx", "dep:validator", "dep:lettre", "dep:tracing", "dep:tracing-subscriber"]
+hydrate = ["leptos/hydrate"]
+
+[dependencies]
+leptos = { version = "0.8.23", default-features = false }
+serde = { version = "1", features = ["derive"] }
+actix-web = { version = "4.12", optional = true }
+sqlx = { version = "0.8", features = ["runtime-tokio", "postgres", "migrate", "uuid"], optional = true }
+validator = { version = "0.20", features = ["derive"], optional = true }
+lettre = { version = "0.11", default-features = false, features = ["smtp-transport", "tokio1", "tokio1-rustls-tls", "builder"], optional = true }
+tracing = { version = "0.1", optional = true }
+tracing-subscriber = { version = "0.3", features = ["env-filter"], optional = true }
+
+[package.metadata.leptos]
+output-name = "saptrans"
+site-root = "target/site"
+site-pkg-dir = "pkg"
+style-file = "public/style.css"
+assets-dir = "public"
+site-addr = "0.0.0.0:3000"
+reload-port = 3001
+bin-features = ["ssr"]
+lib-features = ["hydrate"]
+
