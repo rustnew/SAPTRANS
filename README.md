@@ -8,7 +8,7 @@ Rust stable, Leptos 0.8 (HTML rendu côté serveur), Actix Web, PostgreSQL et SQ
 
 ## Identité visuelle
 
-Le thème utilise un seul vert de marque (`#28734F`) pour le logo monochrome, les liens et les actions. Les grands panneaux emploient un vert profond (`#123D2E`), avec des fonds clairs (`#F6F8F6`) et des séparateurs vert gris (`#DCE5DE`). Les erreurs de formulaire conservent une couleur distincte pour être clairement identifiables.
+Le thème utilise actuellement un vert de travail (`#28734F`) pour le mot-symbole local de secours, les liens et les actions. Ce code provient du SVG provisoire du projet ; il n'a pas été mesuré sur le logo officiel. Les grands panneaux emploient un vert profond (`#123D2E`), avec des fonds clairs (`#F6F8F6`) et des séparateurs vert gris (`#DCE5DE`). Les erreurs de formulaire conservent une couleur distincte pour être clairement identifiables.
 
 La typographie utilise Fira Sans en trois graisses (400, 500 et 600), servie localement en WOFF2 depuis `public/fonts/`. Les fichiers sont sous licence SIL Open Font License, conservée dans ce dossier. La feuille CSS unique définit les composants, les espaces, les thèmes et les adaptations mobile sans dépendance à un service de polices externe.
 
@@ -18,7 +18,9 @@ Le site est disponible en français et en anglais. Le français est la langue pa
 
 ## Accueil
 
-La page d’accueil présente un hero photographique pleine largeur, quatre accès directs, les activités, les pôles transport et immobilier, les implantations, un espace partenaires et la demande commerciale. Le visuel du hero vient de l’ancien accueil SAPTRANS (`mobile_slide.jpg`). Les autres photographies proviennent des pages métier de l’ancien site. Si leurs fichiers ne chargent pas, la mise en page conserve un fond lisible sans afficher d’image cassée. Les logos de partenaires ne sont pas publiés tant que les collaborations et droits d’usage ne sont pas confirmés.
+La page d’accueil présente un hero photographique pleine largeur, quatre accès directs, les activités, les pôles transport et immobilier, les implantations, un espace partenaires et la demande commerciale. Le hero utilise provisoirement la [photographie originale d’Erik Mclean sur Pexels](https://www.pexels.com/photo/aerial-photography-of-a-container-truck-on-the-road-near-by-the-forest-9195241/) (4 000 × 3 000 px, licence Pexels), sans voile ni filtre CSS. Il ne s’agit pas d’un véhicule SAPTRANS ; remplacer ce visuel par une photographie authentique de l’entreprise lorsqu’elle sera disponible. Les autres photographies proviennent des pages métier de l’ancien site. Si leurs fichiers ne chargent pas, la mise en page conserve un fond lisible sans afficher d’image cassée. Les logos de partenaires ne sont pas publiés tant que les collaborations et droits d’usage ne sont pas confirmés.
+
+Les pages métiers disposent d'un hero, d'une navigation interne, de prestations, d'informations issues de l'ancien site, d'un parcours de demande et d'une FAQ. L'entreprise, les implantations, les secteurs, les réalisations, les actualités et le contact ont chacun une composition adaptée. [Le plan des pages et des transitions](docs/pages-and-motion.md) décrit les modèles, les interactions et les contenus restant à valider.
 
 ## Démarrer
 
@@ -40,7 +42,7 @@ Les pages publiques sont rendues en HTML dès la réponse du serveur, avec descr
 
 Le contenu français utilisé par les pages métier est extrait du fichier archivé `SAPTRANS_Extraction_Ancien_Site_2026-11-09.html`. `python3 scripts/extract_legacy_content.py` régénère `public/data/legacy-content.json` hors ligne ; `./dev.sh` le fait automatiquement avant chaque compilation. Le serveur lit ce fichier local, sans appeler l’ancien site. Seules les pages françaises connues sont importées ; les pages anglaises de démonstration sont écartées. Les chiffres d’effectifs, promesses de délai et inventaires précis ne sont pas repris. Les informations propres à l’immobilier restent à documenter. [L'audit complet de l'archive](docs/legacy-audit.md) décrit les 124 pages, tous les liens et les 80 références de médias. Pour régénérer l'inventaire, installer `beautifulsoup4` puis exécuter `python3 scripts/audit_legacy_archive.py`.
 
-Le site charge le logo officiel depuis le dossier local lorsqu'il est disponible, avec un mot-symbole SVG de repli. En thème sombre, le logo est adapté par filtre monochrome. Les photographies utilisent aussi les fichiers locaux en priorité et l'ancien site en repli temporaire. `python3 scripts/fetch_legacy_media.py` récupère les images depuis leurs URL inventoriées sur une machine connectée. Les droits d'utilisation doivent être confirmés avant publication.
+L'en-tête et le pied de page appellent actuellement la variante sombre du logo officiel depuis l'ancien domaine. Si ce chargement échoue, le navigateur affiche le mot-symbole local de secours. L'ancien site référence aussi une variante blanche, mais les deux fichiers PNG manquent dans l'archive locale : leurs couleurs exactes ne sont pas encore vérifiables. Le thème sombre présente le logo sur un fond blanc pour préserver sa lisibilité. Les photographies de l'accueil utilisent des fichiers locaux lorsqu'ils sont disponibles et l'ancien site en repli temporaire ; les pages métiers chargent provisoirement les URL de l'ancien site. `python3 scripts/fetch_legacy_media.py` récupère les images depuis leurs URL inventoriées sur une machine connectée. Les droits d'utilisation doivent être confirmés avant publication.
 
 ## Contenus à confirmer
 
