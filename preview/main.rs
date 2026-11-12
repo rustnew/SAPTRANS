@@ -5,13 +5,14 @@ use std::net::{TcpListener, TcpStream};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 fn main() -> io::Result<()> {
-    let listener = TcpListener::bind("127.0.0.1:3000")?;
+    let address = std::env::var("PREVIEW_LISTEN_ADDR").unwrap_or_else(|_| "127.0.0.1:3000".into());
+    let listener = TcpListener::bind(&address)?;
     let generation = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .expect("horloge système invalide")
         .as_millis()
         .to_string();
-    println!("Maquette SAPTRANS : http://localhost:3000");
+    println!("Maquette SAPTRANS : http://{address}");
     for connection in listener.incoming() {
         match connection {
             Ok(stream) => {
@@ -52,7 +53,10 @@ fn serve(mut stream: TcpStream, generation: &str) -> io::Result<()> {
         } else {
             destination.to_string()
         };
-        write!(stream, "HTTP/1.1 308 Permanent Redirect\r\nLocation: {location}\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")?;
+        write!(
+            stream,
+            "HTTP/1.1 308 Permanent Redirect\r\nLocation: {location}\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+        )?;
         return Ok(());
     }
     let language = Language::from_query(query);
@@ -67,12 +71,17 @@ fn serve(mut stream: TcpStream, generation: &str) -> io::Result<()> {
         .split('&')
         .find_map(|pair| {
             let (key, value) = pair.split_once('=')?;
-            (key == "service" && matches!(value, "transport" | "engins" | "autorelax" | "immobilier"))
-                .then(|| value.to_owned())
+            (key == "service"
+                && matches!(value, "transport" | "engins" | "autorelax" | "immobilier"))
+            .then(|| value.to_owned())
         })
         .unwrap_or_default();
     let (status, content_type, body) = if path == "/__version" {
-        ("200 OK", "text/plain; charset=utf-8", version(generation).into_bytes())
+        (
+            "200 OK",
+            "text/plain; charset=utf-8",
+            version(generation).into_bytes(),
+        )
     } else if path == "/style.css" {
         (
             "200 OK",
@@ -85,6 +94,52 @@ fn serve(mut stream: TcpStream, generation: &str) -> io::Result<()> {
             "image/svg+xml",
             include_bytes!("../public/logo.svg").to_vec(),
         )
+    } else if path == "/brand/logo-white.png" {
+        (
+            "200 OK",
+            "image/png",
+            include_bytes!("../public/brand/logo-white.png").to_vec(),
+        )
+    } else if path == "/brand/logo-dark.png" {
+        (
+            "200 OK",
+            "image/png",
+            include_bytes!("../public/brand/logo-dark.png").to_vec(),
+        )
+    } else if let Some(logo) = match path {
+        "/brand/partners/tractafric-equipment.png" => Some(include_bytes!("../public/brand/partners/tractafric-equipment.png").as_slice()),
+        "/brand/partners/tractafric-motors.png" => Some(include_bytes!("../public/brand/partners/tractafric-motors.png").as_slice()),
+        "/brand/partners/routdaf.png" => Some(include_bytes!("../public/brand/partners/routdaf.png").as_slice()),
+        "/brand/partners/siencam.png" => Some(include_bytes!("../public/brand/partners/siencam.png").as_slice()),
+        "/brand/partners/razel.png" => Some(include_bytes!("../public/brand/partners/razel.png").as_slice()),
+        "/brand/partners/wijma.png" => Some(include_bytes!("../public/brand/partners/wijma.png").as_slice()),
+        "/brand/partners/sogea-satom.png" => Some(include_bytes!("../public/brand/partners/sogea-satom.png").as_slice()),
+        "/brand/partners/guinness.png" => Some(include_bytes!("../public/brand/partners/guinness.png").as_slice()),
+        "/brand/partners/sefeccam.png" => Some(include_bytes!("../public/brand/partners/sefeccam.png").as_slice()),
+        "/brand/partners/boiscam.png" => Some(include_bytes!("../public/brand/partners/boiscam.png").as_slice()),
+        "/brand/partners/arab-contractors.png" => Some(include_bytes!("../public/brand/partners/arab-contractors.png").as_slice()),
+        "/brand/partners/alpicam.png" => Some(include_bytes!("../public/brand/partners/alpicam.png").as_slice()),
+        _ => None,
+    } {
+        ("200 OK", "image/png", logo.to_vec())
+    } else if let Some(filename) = path.strip_prefix("/media/editorial/") {
+        let media_type = match filename.rsplit_once('.').map(|(_, suffix)| suffix) {
+            Some("jpg") => "image/jpeg",
+            Some("png") => "image/png",
+            _ => "application/octet-stream",
+        };
+        if media_type != "application/octet-stream"
+            && filename
+                .chars()
+                .all(|ch| ch.is_ascii_alphanumeric() || ch == '.' || ch == '-')
+        {
+            match std::fs::read(format!("public/media/editorial/{filename}")) {
+                Ok(bytes) => ("200 OK", media_type, bytes),
+                Err(_) => ("404 Not Found", "text/plain; charset=utf-8", b"Media introuvable".to_vec()),
+            }
+        } else {
+            ("404 Not Found", "text/plain; charset=utf-8", b"Media introuvable".to_vec())
+        }
     } else if let Some(filename) = path.strip_prefix("/media/legacy/") {
         let media_type = match filename.rsplit_once('.').map(|(_, suffix)| suffix) {
             Some("jpg" | "jpeg") => "image/jpeg",
@@ -95,18 +150,52 @@ fn serve(mut stream: TcpStream, generation: &str) -> io::Result<()> {
             Some("svg") => "image/svg+xml",
             _ => "application/octet-stream",
         };
-        if filename.is_empty() || !filename.chars().all(|ch| ch.is_ascii_alphanumeric() || ch == '.' || ch == '-') || media_type == "application/octet-stream" {
-            ("404 Not Found", "text/plain; charset=utf-8", b"Media introuvable".to_vec())
+        if filename.is_empty()
+            || !filename
+                .chars()
+                .all(|ch| ch.is_ascii_alphanumeric() || ch == '.' || ch == '-')
+            || media_type == "application/octet-stream"
+        {
+            (
+                "404 Not Found",
+                "text/plain; charset=utf-8",
+                b"Media introuvable".to_vec(),
+            )
         } else {
             match std::fs::read(format!("public/media/legacy/{filename}")) {
                 Ok(bytes) => ("200 OK", media_type, bytes),
-                Err(_) => ("404 Not Found", "text/plain; charset=utf-8", b"Media introuvable".to_vec()),
+                Err(_) => (
+                    "404 Not Found",
+                    "text/plain; charset=utf-8",
+                    b"Media introuvable".to_vec(),
+                ),
             }
         }
     } else if let Some(font) = match path {
-        "/fonts/fira-sans-regular.woff2" => Some(include_bytes!("../public/fonts/fira-sans-regular.woff2").as_slice()),
-        "/fonts/fira-sans-medium.woff2" => Some(include_bytes!("../public/fonts/fira-sans-medium.woff2").as_slice()),
-        "/fonts/fira-sans-semibold.woff2" => Some(include_bytes!("../public/fonts/fira-sans-semibold.woff2").as_slice()),
+        "/fonts/manrope-variable.woff2" => {
+            Some(include_bytes!("../public/fonts/manrope-variable.woff2").as_slice())
+        }
+        "/fonts/barlow-condensed-500.woff2" => {
+            Some(include_bytes!("../public/fonts/barlow-condensed-500.woff2").as_slice())
+        }
+        "/fonts/barlow-condensed-600.woff2" => {
+            Some(include_bytes!("../public/fonts/barlow-condensed-600.woff2").as_slice())
+        }
+        "/fonts/barlow-condensed-700.woff2" => {
+            Some(include_bytes!("../public/fonts/barlow-condensed-700.woff2").as_slice())
+        }
+        "/fonts/barlow-condensed-800.woff2" => {
+            Some(include_bytes!("../public/fonts/barlow-condensed-800.woff2").as_slice())
+        }
+        "/fonts/fira-sans-regular.woff2" => {
+            Some(include_bytes!("../public/fonts/fira-sans-regular.woff2").as_slice())
+        }
+        "/fonts/fira-sans-medium.woff2" => {
+            Some(include_bytes!("../public/fonts/fira-sans-medium.woff2").as_slice())
+        }
+        "/fonts/fira-sans-semibold.woff2" => {
+            Some(include_bytes!("../public/fonts/fira-sans-semibold.woff2").as_slice())
+        }
         _ => None,
     } {
         ("200 OK", "font/woff2", font.to_vec())

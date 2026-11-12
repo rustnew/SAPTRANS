@@ -8,5 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
 WORKDIR /app
 COPY --from=build /app/target/release/saptrans-server /usr/local/bin/saptrans-server
 COPY --from=build /app/public/media/legacy /app/public/media/legacy
+COPY --from=build /app/public/media/editorial /app/public/media/editorial
+COPY --from=build /app/public/brand/partners /app/public/brand/partners
 EXPOSE 3000
 CMD ["saptrans-server"]

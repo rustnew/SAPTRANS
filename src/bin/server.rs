@@ -89,6 +89,79 @@ async fn legacy_media(filename: web::Path<String>) -> impl Responder {
     }
 }
 
+async fn editorial_media(filename: web::Path<String>) -> impl Responder {
+    let filename = filename.into_inner();
+    let media_type = match filename.rsplit_once('.').map(|(_, suffix)| suffix) {
+        Some("jpg") => "image/jpeg",
+        Some("png") => "image/png",
+        _ => return HttpResponse::NotFound().finish(),
+    };
+    if !filename
+        .chars()
+        .all(|ch| ch.is_ascii_alphanumeric() || ch == '.' || ch == '-')
+    {
+        return HttpResponse::NotFound().finish();
+    }
+    match std::fs::read(format!("public/media/editorial/{filename}")) {
+        Ok(bytes) => HttpResponse::Ok()
+            .content_type(media_type)
+            .insert_header(("Cache-Control", "public, max-age=31536000, immutable"))
+            .body(bytes),
+        Err(_) => HttpResponse::NotFound().finish(),
+    }
+}
+
+async fn font_asset(filename: web::Path<String>) -> impl Responder {
+    let bytes: &'static [u8] = match filename.as_str() {
+        "manrope-variable.woff2" => include_bytes!("../../public/fonts/manrope-variable.woff2"),
+        "barlow-condensed-500.woff2" => {
+            include_bytes!("../../public/fonts/barlow-condensed-500.woff2")
+        }
+        "barlow-condensed-600.woff2" => {
+            include_bytes!("../../public/fonts/barlow-condensed-600.woff2")
+        }
+        "barlow-condensed-700.woff2" => {
+            include_bytes!("../../public/fonts/barlow-condensed-700.woff2")
+        }
+        "barlow-condensed-800.woff2" => {
+            include_bytes!("../../public/fonts/barlow-condensed-800.woff2")
+        }
+        "fira-sans-regular.woff2" => include_bytes!("../../public/fonts/fira-sans-regular.woff2"),
+        "fira-sans-medium.woff2" => include_bytes!("../../public/fonts/fira-sans-medium.woff2"),
+        "fira-sans-semibold.woff2" => include_bytes!("../../public/fonts/fira-sans-semibold.woff2"),
+        _ => return HttpResponse::NotFound().finish(),
+    };
+    HttpResponse::Ok()
+        .content_type("font/woff2")
+        .insert_header(("Cache-Control", "public, max-age=31536000, immutable"))
+        .body(bytes)
+}
+
+async fn partner_logo(filename: web::Path<String>) -> impl Responder {
+    let bytes: &'static [u8] = match filename.as_str() {
+        "tractafric-equipment.png" => {
+            include_bytes!("../../public/brand/partners/tractafric-equipment.png")
+        }
+        "tractafric-motors.png" => {
+            include_bytes!("../../public/brand/partners/tractafric-motors.png")
+        }
+        "routdaf.png" => include_bytes!("../../public/brand/partners/routdaf.png"),
+        "siencam.png" => include_bytes!("../../public/brand/partners/siencam.png"),
+        "razel.png" => include_bytes!("../../public/brand/partners/razel.png"),
+        "wijma.png" => include_bytes!("../../public/brand/partners/wijma.png"),
+        "sogea-satom.png" => include_bytes!("../../public/brand/partners/sogea-satom.png"),
+        "guinness.png" => include_bytes!("../../public/brand/partners/guinness.png"),
+        "sefeccam.png" => include_bytes!("../../public/brand/partners/sefeccam.png"),
+        "boiscam.png" => include_bytes!("../../public/brand/partners/boiscam.png"),
+        "arab-contractors.png" => {
+            include_bytes!("../../public/brand/partners/arab-contractors.png")
+        }
+        "alpicam.png" => include_bytes!("../../public/brand/partners/alpicam.png"),
+        _ => return HttpResponse::NotFound().finish(),
+    };
+    HttpResponse::Ok().content_type("image/png").body(bytes)
+}
+
 async fn page(req: HttpRequest, dev: web::Data<DevInfo>) -> impl Responder {
     if let Some(destination) = Page::legacy_destination(req.path()) {
         let language = Language::from_query(req.query_string());
@@ -199,6 +272,10 @@ async fn main() -> std::io::Result<()> {
             .route("/__dev/version", web::get().to(dev_version))
             .route("/media/legacy/{filename}", web::get().to(legacy_media))
             .route(
+                "/media/editorial/{filename}",
+                web::get().to(editorial_media),
+            )
+            .route(
                 "/style.css",
                 web::get().to(|| async {
                     HttpResponse::Ok()
@@ -216,39 +293,25 @@ async fn main() -> std::io::Result<()> {
                 }),
             )
             .route(
-                "/fonts/fira-sans-regular.woff2",
+                "/brand/logo-white.png",
                 web::get().to(|| async {
                     HttpResponse::Ok()
-                        .content_type("font/woff2")
-                        .insert_header(("Cache-Control", "public, max-age=31536000, immutable"))
-                        .body(
-                            include_bytes!("../../public/fonts/fira-sans-regular.woff2").as_slice(),
-                        )
+                        .content_type("image/png")
+                        .insert_header(("Cache-Control", "public, max-age=86400"))
+                        .body(include_bytes!("../../public/brand/logo-white.png").as_slice())
                 }),
             )
             .route(
-                "/fonts/fira-sans-medium.woff2",
+                "/brand/logo-dark.png",
                 web::get().to(|| async {
                     HttpResponse::Ok()
-                        .content_type("font/woff2")
-                        .insert_header(("Cache-Control", "public, max-age=31536000, immutable"))
-                        .body(
-                            include_bytes!("../../public/fonts/fira-sans-medium.woff2").as_slice(),
-                        )
+                        .content_type("image/png")
+                        .insert_header(("Cache-Control", "public, max-age=86400"))
+                        .body(include_bytes!("../../public/brand/logo-dark.png").as_slice())
                 }),
             )
-            .route(
-                "/fonts/fira-sans-semibold.woff2",
-                web::get().to(|| async {
-                    HttpResponse::Ok()
-                        .content_type("font/woff2")
-                        .insert_header(("Cache-Control", "public, max-age=31536000, immutable"))
-                        .body(
-                            include_bytes!("../../public/fonts/fira-sans-semibold.woff2")
-                                .as_slice(),
-                        )
-                }),
-            )
+            .route("/fonts/{filename}", web::get().to(font_asset))
+            .route("/brand/partners/{filename}", web::get().to(partner_logo))
             .service(web::scope("/api").configure(saptrans::contact::routes))
             .configure(saptrans::contact::form_routes)
             .default_service(web::get().to(page))
