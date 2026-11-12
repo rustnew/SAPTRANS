@@ -1,0 +1,2 @@
+ALTER TABLE contact_messages
+    ADD COLUMN IF NOT EXISTS details TEXT NOT NULL DEFAULT '{}';

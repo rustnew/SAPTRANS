@@ -7,7 +7,7 @@ Source locale : `SAPTRANS_Extraction_Ancien_Site_2026-11-09.html`, fournie le 9 
 - Sapou Transport SARL / SAPTRANS : transport et logistique, location d'engins.
 - AutoRelax : contrôle technique, centres mentionnés à Douala et Limbé.
 - Immobilier : quatrième pôle signalé pour la refonte, offre et rattachement à documenter.
-- Direction générale indiquée à Douala-Nyalla Pariso, BP 191 Douala. Coordonnées publiées : +237 243 05 90 22 et infos.sapou@groupesapou.com.
+- Direction générale indiquée à Douala-Nyalla Pariso, BP 191 Douala. L’extraction HTML affiche +237 691 92 76 55, tandis que la maquette actuelle et une note antérieure indiquent +237 243 05 90 22. Le numéro de la direction générale doit être confirmé avant publication. L’adresse `infos.sapou@groupesapou.com` apparaît dans l’extraction. Les contacts AutoRelax extraits sont +237 691 92 16 34 à Douala et +237 691 93 91 63 à Limbé ; eux aussi restent à revalider.
 
 ## Contenus exclus en attendant validation
 

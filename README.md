@@ -6,9 +6,23 @@ Base de la refonte du site public de SAPTRANS / Sapou Transport SARL. L'extracti
 
 Rust stable, Leptos 0.8 (HTML rendu côté serveur), Actix Web, PostgreSQL et SQLx. Les composants interactifs pourront être hydratés en WebAssembly à mesure qu'ils seront nécessaires. CSS sur mesure, Serde et validator pour l'API de contact, Lettre pour la notification SMTP, tracing pour les journaux. Docker Compose et Caddy préparent le déploiement Linux.
 
+## Identité visuelle
+
+Le thème utilise un seul vert de marque (`#28734F`) pour le logo monochrome, les liens et les actions. Les grands panneaux emploient un vert profond (`#123D2E`), avec des fonds clairs (`#F6F8F6`) et des séparateurs vert gris (`#DCE5DE`). Les erreurs de formulaire conservent une couleur distincte pour être clairement identifiables.
+
+La typographie utilise Fira Sans en trois graisses (400, 500 et 600), servie localement en WOFF2 depuis `public/fonts/`. Les fichiers sont sous licence SIL Open Font License, conservée dans ce dossier. La feuille CSS unique définit les composants, les espaces, les thèmes et les adaptations mobile sans dépendance à un service de polices externe.
+
+## Langues et thèmes
+
+Le site est disponible en français et en anglais. Le français est la langue par défaut ; `?lang=en` affiche la version anglaise, et le sélecteur conserve la page lors du changement. Un bouton permet de basculer entre thème clair et sombre. Le site suit d’abord le réglage du système, puis mémorise le choix manuel dans le navigateur.
+
+## Accueil
+
+La page d’accueil présente un hero photographique pleine largeur, quatre accès directs, les activités, les pôles transport et immobilier, les implantations, un espace partenaires et la demande commerciale. Le visuel du hero vient de l’ancien accueil SAPTRANS (`mobile_slide.jpg`). Les autres photographies proviennent des pages métier de l’ancien site. Si leurs fichiers ne chargent pas, la mise en page conserve un fond lisible sans afficher d’image cassée. Les logos de partenaires ne sont pas publiés tant que les collaborations et droits d’usage ne sont pas confirmés.
+
 ## Démarrer
 
-Pour consulter les maquettes sans Docker ni base de données : `./preview.sh`, puis ouvrir `http://localhost:3000`. Cette prévisualisation sert uniquement les pages publiques ; le formulaire ne peut pas enregistrer de message.
+Pour consulter les maquettes sans Docker ni base de données : `./preview.sh`, puis ouvrir `http://localhost:3000`. Le script surveille les fichiers Rust, CSS et SVG, recompile si nécessaire et recharge le navigateur. Cette prévisualisation sert uniquement les pages publiques ; le formulaire ne peut pas enregistrer de message.
 
 1. Installer Rust stable et PostgreSQL, créer une base `saptrans`, puis copier `.env.example` vers `.env` et adapter `DATABASE_URL`.
 2. Exporter les variables de `.env` dans le shell, puis lancer `cargo run --bin saptrans-server`.
@@ -18,16 +32,24 @@ Pour Docker Compose, définir `POSTGRES_PASSWORD` et `SITE_DOMAIN` dans `.env`, 
 
 ## Routes
 
-`/`, `/transport-logistique`, `/location-engins`, `/controle-technique`, `/immobilier`, `/entreprise`, `/contact`, `/health`. Le formulaire de contact fonctionne sans JavaScript. L'API `POST /api/contact` accepte `{ "name": "...", "email": "...", "service": "transport", "message": "..." }`, valide les données et les enregistre en base. `service` vaut `transport`, `engins`, `autorelax` ou `immobilier`. Une notification est tentée si `SMTP_HOST`, `SMTP_FROM` et `CONTACT_RECIPIENT` sont définis. La réponse `202` confirme l'enregistrement, pas la livraison du courriel.
+`/`, `/transport-logistique`, `/location-engins`, `/controle-technique`, `/immobilier`, `/secteurs`, `/realisations`, `/implantations`, `/actualites`, `/entreprise`, `/recherche`, `/contact` et `/health` sont les routes publiques. La recherche filtre les rubriques publiques disponibles. Le formulaire fonctionne sans JavaScript et collecte les coordonnées, le service, la marchandise, le départ, la destination, la quantité, la date souhaitée, l'équipement et le message. Les champs complémentaires sont enregistrés dans `contact_messages.details`; une référence SAP est créée après enregistrement. Un champ leurre réduit les soumissions automatiques. L'API `POST /api/contact` accepte les mêmes champs, valide les données et renvoie la référence. `service` vaut `transport`, `engins`, `autorelax` ou `immobilier`. Une notification est tentée si `SMTP_HOST`, `SMTP_FROM` et `CONTACT_RECIPIENT` sont définis. La réponse confirme l'enregistrement, pas la livraison du courriel.
 
-Les pages publiques sont rendues en HTML dès la réponse du serveur. Un cache partagé de 1 heure est autorisé pour ces pages ; les données privées et l'API n'utilisent pas ce cache. L'administration, les sessions sécurisées, Argon2 et l'envoi de fichiers vers S3/CDN sont les prochains modules : aucune interface d'administration n'est exposée actuellement. La table `admin_users` prépare leur schéma, sans créer de compte par défaut.
+Les pages publiques sont rendues en HTML dès la réponse du serveur, avec descriptions SEO, URL canonique et liens de langue. Un cache partagé de 1 heure est autorisé pour les pages publiques ; les données privées et l'API n'utilisent pas ce cache. L'administration, les sessions sécurisées, Argon2, les catalogues administrables et l'envoi d'images vers S3/CDN restent à construire : aucune interface d'administration n'est exposée actuellement. La table `admin_users` prépare leur schéma, sans créer de compte par défaut.
 
-Le logo d'en-tête et sa variante blanche pointent actuellement vers les fichiers du site historique. Ils devront être intégrés comme médias locaux/CDN après récupération des originaux et validation de leur usage. Les cadres photographiques visibles dans la maquette marquent les emplacements de visuels réels à fournir.
+## Contenu extrait de l’ancien site
+
+Le contenu français utilisé par les pages métier est extrait du fichier archivé `SAPTRANS_Extraction_Ancien_Site_2026-11-09.html`. `python3 scripts/extract_legacy_content.py` régénère `public/data/legacy-content.json` hors ligne ; `./dev.sh` le fait automatiquement avant chaque compilation. Le serveur lit ce fichier local, sans appeler l’ancien site. Seules les pages françaises connues sont importées ; les pages anglaises de démonstration sont écartées. Les chiffres d’effectifs, promesses de délai et inventaires précis ne sont pas repris. Les informations propres à l’immobilier restent à documenter. [L'audit complet de l'archive](docs/legacy-audit.md) décrit les 124 pages, tous les liens et les 80 références de médias. Pour régénérer l'inventaire, installer `beautifulsoup4` puis exécuter `python3 scripts/audit_legacy_archive.py`.
+
+Le site charge le logo officiel depuis le dossier local lorsqu'il est disponible, avec un mot-symbole SVG de repli. En thème sombre, le logo est adapté par filtre monochrome. Les photographies utilisent aussi les fichiers locaux en priorité et l'ancien site en repli temporaire. `python3 scripts/fetch_legacy_media.py` récupère les images depuis leurs URL inventoriées sur une machine connectée. Les droits d'utilisation doivent être confirmés avant publication.
 
 ## Contenus à confirmer
 
-Coordonnées et horaires, offre immobilière, équipements disponibles, partenaires, autorisations d'utilisation des médias. Les contenus anglais de l'ancien site contiennent des textes du modèle WordPress ; ils ne sont pas repris. Aucun média de l'ancien site n'est recopié avant vérification des droits.
+Coordonnées téléphoniques et horaires, offre immobilière, équipements disponibles, partenaires, chiffres clés, réalisations et autorisations d'utilisation des médias. Les contenus anglais de l'ancien site contiennent des textes du modèle WordPress ; ils ne sont pas repris. Les activités, implantations et rubriques éditoriales sont présentées sans inventaire, résultat, certification ni partenariat inventé.
 
 ## Vérification
 
 `cargo fmt --all -- --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`. Les tests navigateur : `npm install`, `npx playwright install chromium`, puis `npm run test:e2e`. Le flux GitHub Actions exécute ces commandes à chaque push et pull request.
+
+## Développement avec backend et frontend
+
+Une seule commande lance le serveur Actix qui rend les pages Leptos SSR, puis surveille Rust, CSS et médias pour recompiler et recharger le navigateur : `./dev.sh`. PostgreSQL doit être installé et démarré localement ; configurez `DATABASE_URL` dans `.env` à partir de `.env.example`. Le script fixe `CARGO_BUILD_JOBS=1` et `RUST_MIN_STACK=33554432` pour éviter le SIGSEGV de compilation signalé sur `js-sys`. Arrêt avec `Ctrl+C`.

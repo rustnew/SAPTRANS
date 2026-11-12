@@ -1,0 +1,105 @@
+{
+  "source_file": "SAPTRANS_Extraction_Ancien_Site_2026-11-09.html",
+  "pages": {
+    "/": {
+      "key": "home",
+      "title": "saptrans – Votre partenaire der route",
+      "source": "https://saptrans.net/",
+      "paragraphs": [
+        "Nous assurons le transport et la logistique de vos",
+        "Nous mettons à votre disposition un parc d’engins modernes",
+        "AutoRelax le partenaire idéal pour votre sécurité routière:",
+        "Nous assurons le transport et la logistique de vos marchandises et containers dans le respect des délais dans tout le Cameroun et toute la sous-région CEMAC.",
+        "Nous mettons à votre disposition un parc d’engins modernes et entretenus de grandes marques internationales ( bulldozers, pelles et encore d’autres).",
+        "AutoRelax de Limbe fût l’un des premiers centres pilote choisi par le Ministère des Transports dans le cadre du nouveau système de la gestion et suivi des CCT"
+      ]
+    },
+    "/nos-services/": {
+      "key": "services",
+      "title": "Nos services – saptrans",
+      "source": "https://saptrans.net/nos-services/",
+      "paragraphs": [
+        "SAPOU TRANSPORT SARL en abrégée SAPTRANS SARL est l’un des leaders dans le transport de marchandises (grumes, débités, conteneurs, porte-engins, agrégats de carrière, pouzzolane, boissons, etc.) à travers la sous-région CEMAC. Nous transportons vos conteneurs dans tout le Cameroun, Tchad, Centrafrique et toute l’Afrique Centrale.",
+        "À côté du transport et de la logistique, SAPTRANS est aussi actif dans le domaine de la location d’engins pour BTP (Bâtissement et Travaux Publics). Ainsi SAPTRANS met à la disposition de ses clients et partenaires des engins de marques comme par exemple des bulldozers, des pelles excavatrices ou chargeuses.",
+        "Dans le secteur de la sécurité routière SAPTRANS propose aux automobilistes un service de visite technique dans ses sites à Douala et Limbé avec pour objectif de contribuer positivement à la réduction du taux des accidents routiers emanants des problèmes techniques des véhicules."
+      ]
+    },
+    "/nos-services/transport-et-logistique/": {
+      "key": "transport",
+      "title": "Transport et logistique – saptrans",
+      "source": "https://saptrans.net/nos-services/transport-et-logistique/",
+      "paragraphs": [
+        "Spécialiste du transport industriel, Saptrans assure le transport de vos marchandises de toutes activités : bâtiments/travaux publics, carrière, bois/grumes, papiers/carton, grande distribution etc…, ainsi que le transport d’engins grâce à ses multiples porte-engins.",
+        "Notre expertise en matière de gestion et de planification des transports nous permet de concevoir des solutions qui répond à vos besoins et de réagir rapidement à toute perturbation.",
+        "Nous sommes en mesure de vous fournir des solutions transports de bout en bout adaptées aux besoins de votre supply chain quel que soit votre secteur d’activité : industriel, grande distribution, produits manufacturés.",
+        "Nos équipes sont formées pour assurer en toute sécurité le chargement et le déchargement de vos marchandises."
+      ]
+    },
+    "/nos-services/location-engins/": {
+      "key": "equipment",
+      "title": "Location d’engins – saptrans",
+      "source": "https://saptrans.net/nos-services/location-engins/",
+      "paragraphs": [
+        "Vous êtes un particulier, une entreprise de BTP, une entreprise minière, une entreprise forestière. La pelle excavatrice est destinée pour vos opérations de curage des rigoles, d’ouverture des drains, de nettoyage des ponts. La pelle excavatrice est également utilisée pour creuser des fosses, pour extraire les produits miniers du sous-sol. La pelle excavatrice est également utilisée pour les opérations d’abattage des arbres, des palmiers à huile, de l’hévéa.",
+        "La pelle chargeuse quant à elle vous permet de charger les camions en terre, pouzzolane, agrégats de carrière…"
+      ]
+    },
+    "/nos-services/visite-technique/": {
+      "key": "inspection",
+      "title": "Visite technique – saptrans",
+      "source": "https://saptrans.net/nos-services/visite-technique/",
+      "paragraphs": [
+        "La visite techniqu automobile est le contrôle technique de l’état physique d’un véhicule, à l’aide d’équipements. Ce contrôle prend en compte les résultats générés automatiquement par les machines, et le résultat du contrôle visuel donné par le contrôleur.",
+        "Contrôle de la pression d’air des pneus, contrôle de parallelisme, contrôle de suspension",
+        "Contrôle visuel, motor, chassis, portières, intérieur et sièges, jauges, phares, huiles et filtres etc."
+      ]
+    },
+    "/entreprise/": {
+      "key": "company",
+      "title": "Entreprise – saptrans",
+      "source": "https://saptrans.net/entreprise/",
+      "paragraphs": [
+        "Aujourd‘hui Saptrans est un spécialiste du transport industriel, et assure le transport de vos marchandises de toutes activités : bâtiments/travaux publics, carrière, bois/grumes, papiers/carton, grande distribution etc…, ainsi que le transport d’engins grâce à ses multiples porte-engins. Saptrans est en mesure de vous fournir des solutions transports de bout en bout adaptées aux besoins de votre supply chain quel que soit votre secteur d’activité et couvre toute la sous-région CEMAC.",
+        "Saptrans ayant sa genèse dans le secteur du transport va élargir son portfolio d‘activités en ouvrant des centres de contrôle technique et ainsi contribuer à la réduction des accidents routiers."
+      ]
+    },
+    "/entreprise/historique/": {
+      "key": "history",
+      "title": "Historique – saptrans",
+      "source": "https://saptrans.net/entreprise/historique/",
+      "paragraphs": [
+        "EN 2018, le top management de la Saptrans s’est lancé dans une opération de diversification de ses activités. En tant que transporteur, elle a orienté sa vision vers la création des centres de contrôles techniques d’automobile (visite technique) au Cameroun. Le but principal étant la réduction considérable des accidents sur nos axes routiers.",
+        "La société Sapou Transport en abrégée SAPTRANS SARL a été créé en 2007 par Monsieur SAPOU KANA ETIENNE sous la forme juridique de la SARL installée à Ndogbong-Bassa derrière la direction commerciale de la société CAMLAIT."
+      ]
+    },
+    "/entreprise/equipe/": {
+      "key": "team",
+      "title": "L’équipe – saptrans",
+      "source": "https://saptrans.net/entreprise/equipe/",
+      "paragraphs": [
+        "Sapou Kana Etienne",
+        "Fokam Zephyrin",
+        "Kapche Josiane",
+        "Foko Justin",
+        "Nantia Merlin",
+        "Nana Serges"
+      ]
+    },
+    "/contact/": {
+      "key": "contact",
+      "title": "Contact – saptrans",
+      "source": "https://saptrans.net/contact/",
+      "paragraphs": [
+        "SAPOU TRANSPORT SARL, DIRECTION GENERALE SIS À DOUALA-NYALLA PARISO",
+        "+237/691 92 76 55→ Appelez-nous maintenant",
+        "infos.sapou@groupesapou.com",
+        "Douala-Yassa",
+        "+237/691 92 16 34 → Appelez-nous maintenant",
+        "infos.autorelax.sapou@groupesapou.com",
+        "Limbé",
+        "+237/691 93 91 63 → Appelez-nous maintenant",
+        "infos.autorelax.sapou@groupesapou.com"
+      ]
+    }
+  }
+}
