@@ -82,6 +82,22 @@ test('les liens des solutions restent accessibles sur mobile', async ({ page, is
   await expect(menu.getByRole('link', { name: 'AutoRelax' })).toBeVisible();
 });
 
+test('le pied de page regroupe les liens SAPTRANS sur ordinateur et mobile', async ({ page, isMobile }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const footer = page.locator('footer');
+  const logo = footer.locator('.footer-logo');
+  await expect(logo).toBeVisible();
+  await expect(logo).toHaveJSProperty('naturalWidth', 225);
+  await expect(footer.locator('.footer-links > div')).toHaveCount(5);
+  await expect(footer.getByRole('link', { name: 'Partenaires' })).toHaveAttribute('href', /#partenaires$/);
+  await expect(page.locator('#partenaires')).toHaveCount(1);
+  const sitemap = await page.request.get('/sitemap.xml');
+  expect(sitemap.ok()).toBe(true);
+  const columns = await footer.locator('.footer-links').evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length);
+  expect(columns).toBe(isMobile ? 2 : 5);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+});
+
 test('toutes les rubriques ouvrent le même grand panneau sur les pages principales', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Le menu mobile utilise sa propre navigation.');
   await page.setViewportSize({ width: 1600, height: 900 });

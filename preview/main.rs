@@ -82,6 +82,30 @@ fn serve(mut stream: TcpStream, generation: &str) -> io::Result<()> {
             "text/plain; charset=utf-8",
             version(generation).into_bytes(),
         )
+    } else if path == "/sitemap.xml" {
+        let paths = [
+            "/",
+            "/transport-logistique",
+            "/location-engins",
+            "/controle-technique",
+            "/immobilier",
+            "/secteurs",
+            "/realisations",
+            "/implantations",
+            "/actualites",
+            "/entreprise",
+            "/mentions-legales",
+            "/contact",
+        ];
+        let entries = paths
+            .iter()
+            .map(|route| format!("<url><loc>https://saptrans.net{route}</loc></url>"))
+            .collect::<String>();
+        (
+            "200 OK",
+            "application/xml; charset=utf-8",
+            format!("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">{entries}</urlset>").into_bytes(),
+        )
     } else if path == "/style.css" {
         (
             "200 OK",
@@ -107,18 +131,42 @@ fn serve(mut stream: TcpStream, generation: &str) -> io::Result<()> {
             include_bytes!("../public/brand/logo-dark.png").to_vec(),
         )
     } else if let Some(logo) = match path {
-        "/brand/partners/tractafric-equipment.png" => Some(include_bytes!("../public/brand/partners/tractafric-equipment.png").as_slice()),
-        "/brand/partners/tractafric-motors.png" => Some(include_bytes!("../public/brand/partners/tractafric-motors.png").as_slice()),
-        "/brand/partners/routdaf.png" => Some(include_bytes!("../public/brand/partners/routdaf.png").as_slice()),
-        "/brand/partners/siencam.png" => Some(include_bytes!("../public/brand/partners/siencam.png").as_slice()),
-        "/brand/partners/razel.png" => Some(include_bytes!("../public/brand/partners/razel.png").as_slice()),
-        "/brand/partners/wijma.png" => Some(include_bytes!("../public/brand/partners/wijma.png").as_slice()),
-        "/brand/partners/sogea-satom.png" => Some(include_bytes!("../public/brand/partners/sogea-satom.png").as_slice()),
-        "/brand/partners/guinness.png" => Some(include_bytes!("../public/brand/partners/guinness.png").as_slice()),
-        "/brand/partners/sefeccam.png" => Some(include_bytes!("../public/brand/partners/sefeccam.png").as_slice()),
-        "/brand/partners/boiscam.png" => Some(include_bytes!("../public/brand/partners/boiscam.png").as_slice()),
-        "/brand/partners/arab-contractors.png" => Some(include_bytes!("../public/brand/partners/arab-contractors.png").as_slice()),
-        "/brand/partners/alpicam.png" => Some(include_bytes!("../public/brand/partners/alpicam.png").as_slice()),
+        "/brand/partners/tractafric-equipment.png" => {
+            Some(include_bytes!("../public/brand/partners/tractafric-equipment.png").as_slice())
+        }
+        "/brand/partners/tractafric-motors.png" => {
+            Some(include_bytes!("../public/brand/partners/tractafric-motors.png").as_slice())
+        }
+        "/brand/partners/routdaf.png" => {
+            Some(include_bytes!("../public/brand/partners/routdaf.png").as_slice())
+        }
+        "/brand/partners/siencam.png" => {
+            Some(include_bytes!("../public/brand/partners/siencam.png").as_slice())
+        }
+        "/brand/partners/razel.png" => {
+            Some(include_bytes!("../public/brand/partners/razel.png").as_slice())
+        }
+        "/brand/partners/wijma.png" => {
+            Some(include_bytes!("../public/brand/partners/wijma.png").as_slice())
+        }
+        "/brand/partners/sogea-satom.png" => {
+            Some(include_bytes!("../public/brand/partners/sogea-satom.png").as_slice())
+        }
+        "/brand/partners/guinness.png" => {
+            Some(include_bytes!("../public/brand/partners/guinness.png").as_slice())
+        }
+        "/brand/partners/sefeccam.png" => {
+            Some(include_bytes!("../public/brand/partners/sefeccam.png").as_slice())
+        }
+        "/brand/partners/boiscam.png" => {
+            Some(include_bytes!("../public/brand/partners/boiscam.png").as_slice())
+        }
+        "/brand/partners/arab-contractors.png" => {
+            Some(include_bytes!("../public/brand/partners/arab-contractors.png").as_slice())
+        }
+        "/brand/partners/alpicam.png" => {
+            Some(include_bytes!("../public/brand/partners/alpicam.png").as_slice())
+        }
         _ => None,
     } {
         ("200 OK", "image/png", logo.to_vec())
@@ -135,10 +183,18 @@ fn serve(mut stream: TcpStream, generation: &str) -> io::Result<()> {
         {
             match std::fs::read(format!("public/media/editorial/{filename}")) {
                 Ok(bytes) => ("200 OK", media_type, bytes),
-                Err(_) => ("404 Not Found", "text/plain; charset=utf-8", b"Media introuvable".to_vec()),
+                Err(_) => (
+                    "404 Not Found",
+                    "text/plain; charset=utf-8",
+                    b"Media introuvable".to_vec(),
+                ),
             }
         } else {
-            ("404 Not Found", "text/plain; charset=utf-8", b"Media introuvable".to_vec())
+            (
+                "404 Not Found",
+                "text/plain; charset=utf-8",
+                b"Media introuvable".to_vec(),
+            )
         }
     } else if let Some(filename) = path.strip_prefix("/media/legacy/") {
         let media_type = match filename.rsplit_once('.').map(|(_, suffix)| suffix) {
