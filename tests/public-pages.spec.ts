@@ -82,6 +82,29 @@ test('les liens des solutions restent accessibles sur mobile', async ({ page, is
   await expect(menu.getByRole('link', { name: 'AutoRelax' })).toBeVisible();
 });
 
+test('toutes les rubriques ouvrent le même grand panneau sur les pages principales', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Le menu mobile utilise sa propre navigation.');
+  await page.setViewportSize({ width: 1600, height: 900 });
+  for (const path of ['/', '/transport-logistique', '/location-engins', '/entreprise']) {
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
+    for (const label of ['Solutions', 'Services', 'Secteurs & lieux', 'À découvrir']) {
+      const menu = page.locator('.desktop-nav details').filter({ has: page.locator('summary', { hasText: label }) });
+      await menu.locator('summary').click();
+      const panel = menu.locator('.mega-panel');
+      await expect(panel).toBeVisible();
+      const box = await panel.boundingBox();
+      expect(box!.width).toBeGreaterThan(1500);
+      expect(box!.height).toBeGreaterThan(350);
+    }
+  }
+  await page.setViewportSize({ width: 1025, height: 900 });
+  for (const menu of await page.locator('.desktop-nav details.mega-menu').all()) {
+    await menu.locator('summary').click();
+    await expect(menu.locator('.mega-panel')).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  }
+});
+
 test('la recherche en anglais renvoie vers le service demandé', async ({ page }) => {
   await page.goto('/recherche?q=freight&lang=en', { waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('heading', { level: 1, name: 'What are you looking for?' })).toBeVisible();
