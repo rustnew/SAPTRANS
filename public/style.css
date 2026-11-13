@@ -279,6 +279,8 @@ p { max-width: 68ch; margin-bottom: 18px; }
 .source-section .editorial-split { align-items: start; }
 .source-prose p { margin-bottom: 22px; }
 .source-section .source-note { margin-top: 26px; font-size: 13px; }
+.source-section > .container > p:not(.eyebrow) { max-width: 76ch; color: var(--muted); }
+.source-section > .container > .directory-list { margin-top: 36px; }
 .history-timeline { margin-top: 42px; border-top: 1px solid var(--line); }
 .history-timeline article { display: grid; grid-template-columns: minmax(140px, .3fr) 1fr; gap: 24px; padding: 28px 0; border-bottom: 1px solid var(--line); }
 .history-timeline article > span { color: var(--brand-strong); font-weight: 700; }
@@ -323,6 +325,8 @@ p { max-width: 68ch; margin-bottom: 18px; }
 .empty-editorial span { color: var(--brand-strong); font-size: 12px; font-weight: 600; letter-spacing: .12em; }
 .empty-editorial p { max-width: 20ch; margin: 0; color: var(--ink); font-size: clamp(28px, 3vw, 44px); font-weight: 600; letter-spacing: -.03em; line-height: 1.15; }
 .company-page [id] { scroll-margin-top: 44px; }
+.company-values .directory-list { margin-top: 36px; }
+.company-values .source-note { max-width: 76ch; }
 .company-divisions { margin-top: 44px; border-top: 1px solid var(--line); }
 .company-divisions a { display: grid; grid-template-columns: 60px 1fr auto; align-items: center; gap: 18px; min-height: 92px; border-bottom: 1px solid var(--line); text-decoration: none; transition: background .25s ease, padding .25s ease; }
 .company-divisions a:hover, .company-divisions a:focus-visible { padding-inline: 14px; background: var(--brand-soft); }

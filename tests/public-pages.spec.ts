@@ -152,6 +152,30 @@ test('la présentation historique reste accessible sans alourdir la page entrepr
   await expect(details.locator('.source-prose p').first()).toBeVisible();
 });
 
+test('les informations reprises de l’ancien site gardent leur contexte historique en français et en anglais', async ({ page }) => {
+  for (const [language, values, coverage, rental, inspection] of [
+    ['fr', 'Les valeurs que l’entreprise mettait en avant.', 'Cette couverture historique ne confirme pas', 'aucun modèle n’est présenté comme actuellement disponible', 'Les critères, documents et délais applicables aujourd’hui'],
+    ['en', 'The values the company put forward.', 'This historical coverage does not confirm', 'no model is presented as currently available', "Confirm today's criteria, documents and time limits"],
+  ] as const) {
+    await page.goto(`/entreprise?lang=${language}`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#valeurs')).toContainText(values);
+    await expect(page.locator('#valeurs .directory-list article')).toHaveCount(4);
+    await page.goto(`/transport-logistique?lang=${language}`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#archives-service')).toContainText(coverage);
+    await page.goto(`/location-engins?lang=${language}`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#archives-service')).toContainText(rental);
+    await page.goto(`/controle-technique?lang=${language}`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#archives-service')).toContainText(inspection);
+    await page.goto(`/immobilier?lang=${language}`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#archives-service')).toHaveCount(0);
+    await page.goto(`/contact?lang=${language}`, { waitUntil: 'domcontentloaded' });
+    const formerContacts = page.locator('#archives-contact');
+    await expect(formerContacts.locator('.source-note')).toContainText(language === 'fr' ? 'aucun des contacts ci-dessous n’est confirmé' : 'none of the contacts below is confirmed');
+    await formerContacts.locator('summary').click();
+    await expect(formerContacts).toContainText('+237 691 92 16 34');
+  }
+});
+
 test('toutes les rubriques ouvrent le même grand panneau sur les pages principales', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Le menu mobile utilise sa propre navigation.');
   await page.setViewportSize({ width: 1600, height: 900 });
