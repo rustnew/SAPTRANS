@@ -1,6 +1,6 @@
 # Lecture de l'extraction de l'ancien site
 
-Source locale : `SAPTRANS_Extraction_Ancien_Site_2026-11-09.html`, fournie le 9 novembre 2026. Sites cités dans ce document : [saptrans.net](https://saptrans.net/) et ses pages françaises et anglaises. La présente note est une synthèse éditoriale, sans validation commerciale.
+Source utilisée : `SAPTRANS_Extraction_Ancien_Site_2026-11-09.html`, fournie le 9 novembre 2026 puis retirée du dépôt. Le contenu extrait reste dans `public/data/legacy-content.json` et `data/legacy_archive.json`. Sites cités dans ce document : [saptrans.net](https://saptrans.net/) et ses pages françaises et anglaises. La présente note est une synthèse éditoriale, sans validation commerciale.
 
 ## Structure retenue
 

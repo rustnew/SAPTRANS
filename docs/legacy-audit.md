@@ -1,6 +1,6 @@
 # Audit de l'ancien site SAPTRANS
 
-Source : `SAPTRANS_Extraction_Ancien_Site_2026-11-09.html` (archive du 9 novembre 2026). `python3 scripts/audit_legacy_archive.py` régénère `data/legacy_archive.json` sans accéder à Internet. Le JSON conserve le texte, les métadonnées, les champs de formulaire et les liens de chaque page, ainsi que les URL des médias, leurs textes alternatifs et leurs pages sources. Il contient **124 pages**, **136 URL couvertes**, **179 destinations relevées dans les pages**, **80 références de médias** et **265 URL distinctes dans l'ensemble des liens HTML de l'archive**. Les 136 URL comprennent des fichiers techniques en plus des pages. Cet inventaire est documentaire et n'est pas publié tel quel dans le site public.
+Source : `SAPTRANS_Extraction_Ancien_Site_2026-11-09.html` (archive du 9 novembre 2026, retirée du dépôt). Après avoir remis cette archive à la racine, `python3 scripts/audit_legacy_archive.py` régénère `data/legacy_archive.json` sans accéder à Internet. Le JSON conserve le texte, les métadonnées, les champs de formulaire et les liens de chaque page, ainsi que les URL des médias, leurs textes alternatifs et leurs pages sources. Il contient **124 pages**, **136 URL couvertes**, **179 destinations relevées dans les pages**, **80 références de médias** et **265 URL distinctes dans l'ensemble des liens HTML de l'archive**. Les 136 URL comprennent des fichiers techniques en plus des pages. Cet inventaire est documentaire et n'est pas publié tel quel dans le site public.
 
 ## Utilisation sur le nouveau site
 

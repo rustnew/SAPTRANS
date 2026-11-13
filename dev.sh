@@ -49,7 +49,12 @@ echo "SAPTRANS : frontend Leptos SSR + backend Actix sur http://localhost:3000"
 echo "Le navigateur se recharge après chaque modification des sources, styles ou médias."
 
 while :; do
-  python3 scripts/extract_legacy_content.py
+  if [ -f SAPTRANS_Extraction_Ancien_Site_2026-11-09.html ]; then
+    python3 scripts/extract_legacy_content.py
+  elif [ ! -s public/data/legacy-content.json ]; then
+    echo "Le contenu local public/data/legacy-content.json manque et l’archive source est absente." >&2
+    exit 1
+  fi
   cargo build --bin saptrans-server
   ./target/debug/saptrans-server &
   server_pid=$!
