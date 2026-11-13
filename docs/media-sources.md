@@ -14,3 +14,17 @@ Les photographies ci-dessous sont des **illustrations**, prises en Afrique et ch
 | `douala-city.jpg` | Xavier Messina · Douala, Cameroun | [Pexels 12251157](https://www.pexels.com/photo/photo-of-a-city-at-the-river-12251157/) |
 
 La [licence Pexels](https://www.pexels.com/license/) autorise l’usage sur un site web et apprécie l’attribution. Elle interdit de suggérer qu’une personne photographiée cautionne l’entreprise. Les fichiers locaux sont des versions redimensionnées téléchargées via Pexels pour un chargement rapide.
+
+## Visuels repris de l’ancien site SAPTRANS
+
+Les images suivantes ont été téléchargées depuis les pages de service de l’ancien site. Certaines peuvent être des illustrations acquises par l’ancien site ; leur présence dans l’archive ne prouve pas qu’elles représentent une opération actuelle de SAPTRANS. Les cartes indiquent cette provenance et invitent à confirmer les moyens disponibles.
+
+| Fichier local | Source de l’ancien site |
+| --- | --- |
+| `archive-transport-container.png` | [Transport de conteneurs](https://saptrans.net/wp-content/uploads/2021/08/transportlogistique_container_640x481.png) |
+| `archive-transport-grumes.png` | [Transport de grumes](https://saptrans.net/wp-content/uploads/2021/07/transportlogistique_grume_640x480-400x300.png) |
+| `archive-equipment-excavator.jpg` | [Pelle excavatrice](https://saptrans.net/wp-content/uploads/2021/08/1B8A1500_pelleuse_w1920-640x480.jpg) |
+| `archive-equipment-bulldozer.jpg` | [Engin de chantier](https://saptrans.net/wp-content/uploads/2021/08/engin-sapou-transport-sarl-640x480.jpg) |
+| `archive-equipment-loader.jpg` | [Pelle chargeuse](https://saptrans.net/wp-content/uploads/2021/08/pelle_chargeuse_2-640x470.jpg) |
+| `archive-autorelax-inspection.png` | [Centre AutoRelax](https://saptrans.net/wp-content/uploads/2021/07/visite_technique_service_640x480.png) |
+| `archive-autorelax-team.jpg` | [Équipe AutoRelax](https://saptrans.net/wp-content/uploads/2021/08/visite_technique_distinction-400x300.jpg) |

@@ -128,6 +128,30 @@ test('les pages de service présentent une ouverture éditoriale adaptée à l�
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
 });
 
+test('les prestations proposent une image vérifiée et une action réelle', async ({ page }) => {
+  for (const path of ['/transport-logistique', '/location-engins', '/controle-technique', '/immobilier']) {
+    await page.goto(path, { waitUntil: 'domcontentloaded' });
+    const cards = page.locator('#prestations .offer-card');
+    await expect(cards).toHaveCount(3);
+    await expect(cards.getByRole('link', { name: 'En parler à l’équipe →' })).toHaveCount(3);
+    const images = cards.locator('img');
+    await expect(images).toHaveCount(path === '/immobilier' ? 0 : 3);
+    for (const image of await images.all()) {
+      await image.scrollIntoViewIfNeeded();
+      await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    }
+  }
+});
+
+test('la présentation historique reste accessible sans alourdir la page entreprise', async ({ page }) => {
+  await page.goto('/entreprise', { waitUntil: 'domcontentloaded' });
+  const details = page.locator('.company-archive');
+  await expect(details).not.toHaveAttribute('open', '');
+  await details.locator('summary').click();
+  await expect(details).toHaveAttribute('open', '');
+  await expect(details.locator('.source-prose p').first()).toBeVisible();
+});
+
 test('toutes les rubriques ouvrent le même grand panneau sur les pages principales', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Le menu mobile utilise sa propre navigation.');
   await page.setViewportSize({ width: 1600, height: 900 });
@@ -180,6 +204,50 @@ test('les visuels africains des pages principales se chargent', async ({ page })
       const response = await page.request.get(source!);
       expect(response.ok(), `${path} : ${source}`).toBe(true);
       expect(response.headers()['content-type'], `${path} : ${source}`).toMatch(/^image\/(jpeg|png)/);
+    }
+  }
+});
+
+test('la clôture photographique de l’accueil mène au contact avant le pied de page', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  const cards = page.locator('.home-finale-card');
+  await expect(cards).toHaveCount(3);
+  for (const card of await cards.all()) {
+    const image = card.locator('img');
+    await card.scrollIntoViewIfNeeded();
+    await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    await expect(card).toHaveAttribute('href', /^\/(transport-logistique|location-engins|controle-technique)/);
+  }
+  const closing = page.locator('.site-shell > .home-contact-visual');
+  await closing.scrollIntoViewIfNeeded();
+  await expect(closing.getByRole('link', { name: /Demander un devis|Request a quote/ })).toHaveAttribute('href', '/contact?lang=fr#demande');
+  await expect.poll(() => closing.locator('img').evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  const closingBox = await closing.boundingBox();
+  const footerBox = await page.locator('footer').boundingBox();
+  expect(closingBox).not.toBeNull();
+  expect(footerBox).not.toBeNull();
+  expect(Math.abs(closingBox!.y + closingBox!.height - footerBox!.y)).toBeLessThan(2);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(closing.locator('img')).toHaveCSS('animation-name', 'none');
+});
+
+test('la clôture visuelle précède le pied de page sur toutes les routes publiques', async ({ page }) => {
+  for (const language of ['fr', 'en']) {
+    for (const path of [
+      '/', '/transport-logistique', '/location-engins', '/controle-technique', '/immobilier',
+      '/secteurs', '/realisations', '/implantations', '/actualites', '/entreprise',
+      '/recherche', '/mentions-legales', '/contact', '/contact/merci', '/contact/erreur',
+    ]) {
+      await page.goto(`${path}?lang=${language}`, { waitUntil: 'domcontentloaded' });
+      await expect(page.locator('html')).toHaveAttribute('lang', language);
+      await expect(page.locator('main')).toHaveCount(1);
+      const closing = page.locator('.site-shell > .home-contact-visual');
+      await expect(closing, `${path} (${language})`).toHaveCount(1);
+      await expect(closing.locator('img')).toHaveAttribute('src', /^\/media\/editorial\//);
+      await expect(closing.locator('a.button')).toHaveAttribute('href', new RegExp(`^/.*lang=${language}`));
+      expect(await closing.evaluate((element) => element.nextElementSibling?.tagName)).toBe('FOOTER');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), `${path} (${language})`).toBe(false);
     }
   }
 });

@@ -1,8 +1,16 @@
 /target/
 /preview/target/
 /.env
+/.env.*
+!/.env.example
 /node_modules/
 /test-results/
 /playwright-report/
+/coverage/
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
 *.log
 __pycache__/
+*.py[cod]
