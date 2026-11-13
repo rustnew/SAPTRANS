@@ -102,6 +102,8 @@ pub fn activity_page(
         "inspection" => "/contact?service=autorelax#demande",
         _ => "/contact?service=immobilier#demande",
     });
+    let home_href = language.href("/");
+    let services_href = language.href("/#services");
     let source_copy = source_key
         .map(|key| {
             if language == Language::En {
@@ -125,7 +127,7 @@ pub fn activity_page(
     };
 
     view! { <main class="activity-page">
-        <section class=hero_class><div class="activity-hero-media" inner_html=hero_media></div><div class="container activity-hero-content"><p class="eyebrow">{kicker}</p><h1>{title}</h1><p>{intro}</p><div class="actions"><a class="button button-light" href=contact_href.clone()>{language.text("Faire une demande", "Send an enquiry")}</a><a class="button button-outline-light" href="#apercu">{language.text("Découvrir le service", "Explore the service")}</a></div></div></section>
+        <section class=hero_class><div class="activity-hero-media" inner_html=hero_media></div><div class="container activity-hero-content"><nav class="hero-breadcrumbs" aria-label=language.text("Fil d’Ariane", "Breadcrumb")><a href=home_href>{language.text("Accueil", "Home")}</a><span aria-hidden="true">"›"</span><a href=services_href>{language.text("Solutions", "Solutions")}</a><span aria-hidden="true">"›"</span><span aria-current="page">{kicker}</span></nav><p class="eyebrow">{kicker}</p><h1>{title}</h1><p>{intro}</p><div class="actions"><a class="button" href=contact_href.clone()>{language.text("Faire une demande", "Send an enquiry")} " →"</a><a class="button button-quiet" href="#apercu">{language.text("Découvrir le service", "Explore the service")}</a></div></div></section>
         <nav class="page-anchor-nav" aria-label=language.text("Sur cette page", "On this page")><div class="container"><a href="#apercu">{language.text("Vue d’ensemble", "Overview")}</a><a href="#prestations">{language.text("Prestations", "Services")}</a><a href="#situations">{language.text("Applications", "Applications")}</a><a href="#demarche">{language.text("Notre méthode", "Our approach")}</a><a href="#informations">{language.text("Informations", "Information")}</a><a href="#questions">{language.text("Questions", "FAQs")}</a><a href="#contact-service">{language.text("Contact", "Contact")}</a></div></nav>
         <section class="section editorial-split container" id="apercu"><div class="editorial-copy"><p class="eyebrow">{language.text("VUE D’ENSEMBLE", "OVERVIEW")}</p><h2>{lead}</h2><p>{explanation}</p><a class="text-link" href=contact_href.clone()>{language.text("Parler à notre équipe", "Talk to our team")} " ↗"</a></div><div inner_html=editorial_media></div></section>
         <section class="section service-offers" id="prestations"><div class="container"><div class="section-heading-row"><div><p class="eyebrow">{language.text("NOS RÉPONSES", "WHAT WE OFFER")}</p><h2>{language.text("Un service adapté à votre besoin.", "A service shaped around your needs.")}</h2></div><p>{language.text("Les modalités précises sont confirmées avec l’équipe avant toute prestation.", "The team confirms the precise terms before any service.")}</p></div><div class="offer-grid">{offers.into_iter().enumerate().map(|(index, (name, description))| view! { <article class="offer-card"><span class="card-number">{format!("{:02}", index + 1)}</span><h3>{name}</h3><p>{description}</p></article> }).collect_view()}</div></div></section>

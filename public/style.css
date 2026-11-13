@@ -861,3 +861,58 @@ input, select, textarea { font-family: var(--font-body); font-size: 16px; line-h
   .quick-grid strong { font-size: 24px; }
   .mobile-menu summary { font-size: 12px; }
 }
+
+/* Interior page composition inspired by DP World's editorial rhythm. */
+main h1, main h2, main h3 { font-family: var(--font-body); font-weight: 800; letter-spacing: -.045em; }
+main h1, main h2 { text-transform: uppercase; text-wrap: balance; }
+main h2 { font-size: clamp(40px, 4.4vw, 62px); line-height: 1.07; }
+main h3 { font-size: clamp(25px, 2.3vw, 34px); line-height: 1.16; }
+.home-shell .hero h1 { max-width: 15ch; font-size: clamp(52px, 5.6vw, 78px); line-height: 1.04; }
+.home-shell .service-card h3 { font-size: clamp(28px, 2.5vw, 36px); }
+.hero-breadcrumbs { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; color: currentColor; font-size: 13px; font-weight: 700; line-height: 1.5; }
+.hero-breadcrumbs a { color: inherit; text-decoration: none; }
+.hero-breadcrumbs a:hover, .hero-breadcrumbs a:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
+.hero-breadcrumbs [aria-current="page"] { opacity: .72; }
+.directory-hero .hero-breadcrumbs { margin-bottom: 28px; color: #fff; }
+.directory-hero h1 { max-width: 17ch; font-size: clamp(48px, 4.8vw, 68px); line-height: 1.04; }
+.activity-hero, .activity-hero.has-photo { display: flex; min-height: 710px; align-items: center; overflow: hidden; background: var(--surface); color: var(--ink); }
+.activity-hero.has-photo::before { content: none; }
+.activity-hero-media { z-index: 0; top: 0; right: 0; bottom: 0; left: 50%; background: var(--brand-dark); }
+.activity-hero-media img { object-position: center; }
+.activity-hero-content { position: relative; z-index: 1; padding-block: 76px; }
+.activity-hero .hero-breadcrumbs { width: min(46%, 540px); color: var(--muted); }
+.activity-hero .eyebrow { color: var(--brand-strong); }
+.activity-hero h1 { width: min(46%, 540px); max-width: none; margin-bottom: 22px; color: var(--ink); font-size: clamp(42px, 4.2vw, 62px); line-height: 1.04; }
+.activity-hero p:not(.eyebrow) { width: min(46%, 540px); max-width: none; color: var(--muted); font-size: clamp(16px, 1.25vw, 19px); line-height: 1.55; }
+.activity-hero .actions { width: min(46%, 540px); margin-top: 26px; }
+.activity-hero .button { min-height: 50px; margin: 0; }
+.activity-hero .button-quiet { border-color: var(--line); background: transparent; color: var(--brand-strong); }
+.activity-hero .button-quiet:hover { border-color: var(--brand-strong); background: var(--brand-soft); }
+.activity-hero .button:not(.button-quiet) { border-color: #185a3a; background: #185a3a; color: #fff; }
+.activity-hero .button:not(.button-quiet):hover { border-color: #123d2e; background: #123d2e; }
+.service-card { background: var(--surface); }
+.service-card-body { padding: 24px 26px 28px; border: 0; }
+.service-card:hover .service-card-body, .service-card:focus-within .service-card-body { border: 0; }
+.service-card p { color: var(--muted); }
+.offer-card, .offer-card:first-child { position: relative; border-radius: 0; }
+.offer-card::after { position: absolute; right: 30px; bottom: 26px; color: var(--brand-strong); content: "↗"; font-size: 25px; }
+:root[data-theme="dark"] .activity-hero { background: var(--surface); }
+:root[data-theme="dark"] .activity-hero .button:not(.button-quiet) { border-color: var(--brand); background: var(--brand); color: var(--brand-dark); }
+@media (max-width: 900px) {
+  .activity-hero, .activity-hero.has-photo { display: flex; min-height: 0; flex-direction: column; align-items: stretch; }
+  .activity-hero-content { order: 0; padding-block: 52px 58px; }
+  .activity-hero-media { position: relative; order: 1; left: auto; width: 100%; height: clamp(260px, 48vw, 420px); }
+  .activity-hero .hero-breadcrumbs, .activity-hero h1, .activity-hero p:not(.eyebrow), .activity-hero .actions { width: 100%; max-width: 700px; }
+  .activity-hero h1 { font-size: clamp(42px, 6.3vw, 60px); }
+}
+@media (max-width: 520px) {
+  main h2 { font-size: clamp(34px, 9vw, 44px); }
+  main h3, .home-shell .service-card h3 { font-size: clamp(24px, 7vw, 30px); }
+  .home-shell .hero h1 { font-size: clamp(46px, 11vw, 58px); }
+  .directory-hero h1 { font-size: clamp(42px, 10vw, 52px); }
+  .activity-hero-content { padding-block: 34px 42px; }
+  .activity-hero h1 { font-size: clamp(38px, 10vw, 50px); }
+  .activity-hero .actions { gap: 10px; }
+  .activity-hero .actions .button { width: 100%; }
+  .hero-breadcrumbs { margin-bottom: 18px; font-size: 12px; }
+}

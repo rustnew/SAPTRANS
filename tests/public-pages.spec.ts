@@ -109,6 +109,25 @@ test('le pied de page regroupe les liens SAPTRANS sur ordinateur et mobile', asy
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
 });
 
+test('les pages de service présentent une ouverture éditoriale adaptée à l’écran', async ({ page, isMobile }) => {
+  await page.goto('/transport-logistique', { waitUntil: 'domcontentloaded' });
+  const hero = page.locator('.activity-hero');
+  const breadcrumb = hero.getByRole('navigation', { name: 'Fil d’Ariane' });
+  await expect(breadcrumb.getByRole('link', { name: 'Solutions' })).toHaveAttribute('href', /#services$/);
+  await expect(hero.getByRole('link', { name: /Faire une demande/ })).toBeVisible();
+  const imageBox = await hero.locator('.activity-hero-media').boundingBox();
+  const textBox = await hero.locator('.activity-hero-content').boundingBox();
+  expect(imageBox).not.toBeNull();
+  expect(textBox).not.toBeNull();
+  if (isMobile) {
+    expect(imageBox!.y).toBeGreaterThanOrEqual(textBox!.y + textBox!.height - 1);
+  } else {
+    expect(imageBox!.x).toBeGreaterThanOrEqual(page.viewportSize()!.width * 0.48);
+    expect(imageBox!.height).toBeGreaterThan(600);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+});
+
 test('toutes les rubriques ouvrent le même grand panneau sur les pages principales', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Le menu mobile utilise sa propre navigation.');
   await page.setViewportSize({ width: 1600, height: 900 });
@@ -166,16 +185,20 @@ test('les visuels africains des pages principales se chargent', async ({ page })
 });
 
 test('les deux polices éditoriales locales sont chargées', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('/entreprise', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => document.fonts.ready);
   const fonts = await page.evaluate(() => ({
     body: getComputedStyle(document.body).fontFamily,
     title: getComputedStyle(document.querySelector('h1')!).fontFamily,
+    accent: getComputedStyle(document.querySelector('.company-divisions a strong')!).fontFamily,
     bodyLoaded: document.fonts.check('400 16px Manrope'),
-    titleLoaded: document.fonts.check('500 72px "Barlow Condensed"'),
+    titleLoaded: document.fonts.check('800 64px Manrope'),
+    accentLoaded: document.fonts.check('500 28px "Barlow Condensed"'),
   }));
   expect(fonts.body).toContain('Manrope');
-  expect(fonts.title).toContain('Barlow Condensed');
+  expect(fonts.title).toContain('Manrope');
+  expect(fonts.accent).toContain('Barlow Condensed');
   expect(fonts.bodyLoaded).toBe(true);
   expect(fonts.titleLoaded).toBe(true);
+  expect(fonts.accentLoaded).toBe(true);
 });

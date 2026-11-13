@@ -10,7 +10,9 @@ Rust stable, Leptos 0.8 (HTML rendu côté serveur), Actix Web, PostgreSQL et SQ
 
 Le thème utilise actuellement un vert de travail (`#28734F`) pour le mot-symbole local de secours, les liens et les actions. Ce code provient du SVG provisoire du projet ; il n'a pas été mesuré sur le logo officiel. Les grands panneaux emploient un vert profond (`#123D2E`), avec des fonds clairs (`#F6F8F6`) et des séparateurs vert gris (`#DCE5DE`). Les erreurs de formulaire conservent une couleur distincte pour être clairement identifiables.
 
-La typographie associe Barlow Condensed (titres et grands appels en graisse 500, avec des variantes 600 à 800 disponibles) à Manrope variable (texte, navigation et formulaires, graisses 400 à 800). Les fichiers WOFF2 sont servis localement depuis `public/fonts/` ; les licences SIL Open Font License sont conservées dans ce dossier. La feuille CSS définit une hiérarchie commune pour les pages, les deux thèmes et les adaptations mobile sans dépendance à un service de polices externe.
+La typographie utilise Manrope variable pour les grands titres, le texte, la navigation et les formulaires (graisses 400 à 800). Barlow Condensed reste utilisé pour certains accents typographiques et repères de page. Les fichiers WOFF2 sont servis localement depuis `public/fonts/` ; les licences SIL Open Font License sont conservées dans ce dossier. La feuille CSS définit une hiérarchie commune pour les pages, les deux thèmes et les adaptations mobile sans dépendance à un service de polices externe.
+
+La [composition des pages publiques](docs/dpworld-content-patterns.md) décrit la formule éditoriale observée sur DP World et son adaptation aux contenus SAPTRANS.
 
 ## Langues et thèmes
 
