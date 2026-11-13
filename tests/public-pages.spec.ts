@@ -89,6 +89,17 @@ test('le pied de page regroupe les liens SAPTRANS sur ordinateur et mobile', asy
   await expect(logo).toBeVisible();
   await expect(logo).toHaveJSProperty('naturalWidth', 225);
   await expect(footer.locator('.footer-links > div')).toHaveCount(5);
+  const social = footer.getByRole('navigation', { name: 'Réseaux sociaux' });
+  for (const [name, href] of [
+    ['Facebook', 'http://www.facebook.com'],
+    ['X / Twitter', 'http://www.twitter.com'],
+    ['Instagram', 'http://www.instagram.com'],
+    ['LinkedIn', 'http://www.linkedin.com'],
+  ]) {
+    const link = social.getByRole('link', { name });
+    await expect(link).toHaveAttribute('href', href);
+    await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  }
   await expect(footer.getByRole('link', { name: 'Partenaires' })).toHaveAttribute('href', /#partenaires$/);
   await expect(page.locator('#partenaires')).toHaveCount(1);
   const sitemap = await page.request.get('/sitemap.xml');
