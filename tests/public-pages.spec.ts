@@ -43,6 +43,45 @@ test('la navigation anglaise affiche une vraie page en anglais', async ({ page }
   await expect(page.getByRole('heading', { level: 1, name: 'Moving your ambitions forward.' })).toBeVisible();
 });
 
+test('le menu Solutions ouvre un grand panneau et se ferme avec Échap', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Le menu mobile utilise sa propre navigation.');
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.goto('/transport-logistique', { waitUntil: 'domcontentloaded' });
+  const menu = page.locator('.solutions-menu');
+  const panel = menu.locator('.solutions-panel');
+  await menu.locator('summary').click();
+  await expect(panel).toBeVisible();
+  await panel.getByRole('button', { name: /Location d’engins/ }).click();
+  await expect(panel.getByRole('link', { name: /Découvrir les engins/ })).toBeVisible();
+  await panel.getByRole('button', { name: /Contrôle technique/ }).click();
+  await expect(panel.getByRole('link', { name: /Découvrir AutoRelax/ })).toBeVisible();
+  const box = await panel.boundingBox();
+  expect(box!.width).toBeGreaterThan(900);
+  expect(box!.height).toBeGreaterThan(350);
+  await page.keyboard.press('Escape');
+  await expect(panel).toBeHidden();
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await menu.locator('summary').click();
+  await expect(panel).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  await page.setViewportSize({ width: 1025, height: 900 });
+  await expect(menu.locator('summary')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect(menu.locator('summary')).toBeHidden();
+  await expect(page.locator('.mobile-menu summary')).toBeVisible();
+});
+
+test('les liens des solutions restent accessibles sur mobile', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'Vérification du menu mobile.');
+  await page.goto('/location-engins', { waitUntil: 'domcontentloaded' });
+  const menu = page.locator('.mobile-menu');
+  await menu.locator('summary').click();
+  await expect(menu.getByRole('link', { name: 'Transport & logistique' })).toBeVisible();
+  await expect(menu.getByRole('link', { name: 'Location d’engins' })).toBeVisible();
+  await expect(menu.getByRole('link', { name: 'AutoRelax' })).toBeVisible();
+});
+
 test('la recherche en anglais renvoie vers le service demandé', async ({ page }) => {
   await page.goto('/recherche?q=freight&lang=en', { waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('heading', { level: 1, name: 'What are you looking for?' })).toBeVisible();

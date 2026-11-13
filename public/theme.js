@@ -61,6 +61,17 @@
         });
       });
     });
+    const solutionMenu = header.querySelector(".solutions-menu");
+    const choices = [...(solutionMenu?.querySelectorAll("[data-mega-target]") || [])];
+    const panels = [...(solutionMenu?.querySelectorAll("[data-mega-content]") || [])];
+    const selectSolution = (choice) => {
+      choices.forEach((item) => item.setAttribute("aria-pressed", String(item === choice)));
+      panels.forEach((panel) => { panel.hidden = panel.dataset.megaContent !== choice.dataset.megaTarget; });
+    };
+    choices.forEach((choice) => {
+      choice.addEventListener("click", () => selectSolution(choice));
+      choice.addEventListener("pointerenter", () => selectSolution(choice));
+    });
     document.addEventListener("pointerdown", (event) => {
       if (menus.some((menu) => menu.contains(event.target))) return;
       menus.forEach((menu) => { menu.open = false; });
