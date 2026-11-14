@@ -30,17 +30,25 @@ Le [parcours de numérisation des visites AutoRelax](docs/autorelax-process.md) 
 
 Pour consulter les maquettes sans Docker ni base de données : `./preview.sh`, puis ouvrir `http://localhost:3000`. Le script surveille les fichiers Rust, CSS et SVG, recompile si nécessaire et recharge le navigateur. Cette prévisualisation sert uniquement les pages publiques ; le formulaire ne peut pas enregistrer de message.
 
-1. Installer Rust stable et PostgreSQL, créer une base `saptrans`, puis copier `.env.example` vers `.env` et adapter `DATABASE_URL`.
+1. Installer Rust stable et PostgreSQL, créer une base `saptrans`, puis copier `.env.example` vers `.env`, adapter `DATABASE_URL` et définir `SAPTRANS_SESSION_KEY_HEX` avec `openssl rand -hex 64`. Conserver cette clé secrète et stable entre les redémarrages.
 2. Exporter les variables de `.env` dans le shell, puis lancer `cargo run --bin saptrans-server`.
 3. Ouvrir `http://localhost:3000`. Le serveur applique les migrations SQLx au démarrage.
 
-Pour Docker Compose, définir `POSTGRES_PASSWORD` et `SITE_DOMAIN` dans `.env`, puis lancer `docker compose up --build`. Caddy gère HTTPS pour un domaine public résolu vers le serveur.
+Pour Docker Compose, définir `POSTGRES_PASSWORD`, `SITE_DOMAIN` et `SAPTRANS_SESSION_KEY_HEX` dans `.env`, puis lancer `docker compose up --build`. Caddy gère HTTPS pour un domaine public résolu vers le serveur.
 
 ## Routes
 
 `/`, `/transport-logistique`, `/location-engins`, `/controle-technique`, `/immobilier`, `/secteurs`, `/realisations`, `/implantations`, `/actualites`, `/entreprise`, `/recherche`, `/contact` et `/health` sont les routes publiques. La recherche filtre les rubriques publiques disponibles. Le formulaire fonctionne sans JavaScript et collecte les coordonnées, le service, la marchandise, le départ, la destination, la quantité, la date souhaitée, l'équipement et le message. Les champs complémentaires sont enregistrés dans `contact_messages.details`; une référence SAP est créée après enregistrement. Un champ leurre réduit les soumissions automatiques. L'API `POST /api/contact` accepte les mêmes champs, valide les données et renvoie la référence. `service` vaut `transport`, `engins`, `autorelax` ou `immobilier`. Une notification est tentée si `SMTP_HOST`, `SMTP_FROM` et `CONTACT_RECIPIENT` sont définis. La réponse confirme l'enregistrement, pas la livraison du courriel.
 
-Les pages publiques sont rendues en HTML dès la réponse du serveur, avec descriptions SEO, URL canonique et liens de langue. Un cache partagé de 1 heure est autorisé pour les pages publiques ; les données privées et l'API n'utilisent pas ce cache. L'administration, les sessions sécurisées, Argon2, les catalogues administrables et l'envoi d'images vers S3/CDN restent à construire : aucune interface d'administration n'est exposée actuellement. La table `admin_users` prépare leur schéma, sans créer de compte par défaut.
+Les pages publiques sont rendues en HTML dès la réponse du serveur, avec descriptions SEO, URL canonique et liens de langue. Un cache partagé de 1 heure est autorisé pour les pages publiques ; les données privées et l'API n'utilisent pas ce cache.
+
+## Espace équipe
+
+`/espace` regroupe les demandes publiques et les dossiers internes. Une demande publique crée un dossier et une première entrée d'historique dans la même transaction. Les membres consultent les dossiers selon leur rôle ; les inspecteurs AutoRelax sont limités à leur centre. Les transitions de statut exigent un compte rendu et conservent l'auteur, l'ancien statut et l'heure. Le frontend est rendu avec Leptos SSR ; Actix gère les routes et PostgreSQL les données.
+
+Aucun compte n'est créé automatiquement. Pour créer le premier compte, lancer `cargo run --bin saptrans-member -- create email@entreprise.cm admin "Nom Prénom"` avec `DATABASE_URL` défini ; le mot de passe est demandé sur l'entrée standard. Les rôles disponibles sont `admin`, `commercial`, `transport`, `equipment`, `inspection`, `finance` et `viewer`. Le rôle `inspection` exige un centre en dernier argument. Utiliser HTTPS en production ; `SAPTRANS_COOKIE_SECURE=false` est réservé aux tests locaux en HTTP. Les sessions utilisent un cookie HttpOnly et SameSite Strict, les formulaires internes un jeton CSRF et les mots de passe Argon2. L'accès d'un membre désactivé est réévalué à chaque requête.
+
+Cette première version couvre la réception, la création, la consultation et la progression des dossiers. Le planning de ressources, les rendez-vous AutoRelax détaillés, les rapports de visite, les devis chiffrés et le suivi GPS restent à implémenter avec les règles métier et données réelles. Aucun certificat officiel n'est émis par cet espace.
 
 ## Contenu extrait de l’ancien site
 

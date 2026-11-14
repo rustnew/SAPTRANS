@@ -94,6 +94,17 @@ fn valid(payload: &ContactRequest) -> bool {
 }
 
 async fn save(pool: &PgPool, payload: &ContactRequest) -> Result<String, sqlx::Error> {
+    let mut transaction = pool.begin().await?;
+    let details = serde_json::json!({
+        "company": clean_option(payload.company.as_deref()),
+        "phone": clean_option(payload.phone.as_deref()),
+        "cargo": clean_option(payload.cargo.as_deref()),
+        "origin": clean_option(payload.origin.as_deref()),
+        "destination": clean_option(payload.destination.as_deref()),
+        "quantity": clean_option(payload.quantity.as_deref()),
+        "desired_date": clean_option(payload.desired_date.as_deref()),
+        "equipment": clean_option(payload.equipment.as_deref()),
+    });
     let (id,): (i64,) = sqlx::query_as(
         "INSERT INTO contact_messages (name, email, service, message, details) VALUES ($1, $2, $3, $4, $5) RETURNING id",
     )
@@ -101,22 +112,29 @@ async fn save(pool: &PgPool, payload: &ContactRequest) -> Result<String, sqlx::E
     .bind(payload.email.trim())
     .bind(payload.service.as_str())
     .bind(payload.message.trim())
-    .bind(
-        serde_json::json!({
-            "company": clean_option(payload.company.as_deref()),
-            "phone": clean_option(payload.phone.as_deref()),
-            "cargo": clean_option(payload.cargo.as_deref()),
-            "origin": clean_option(payload.origin.as_deref()),
-            "destination": clean_option(payload.destination.as_deref()),
-            "quantity": clean_option(payload.quantity.as_deref()),
-            "desired_date": clean_option(payload.desired_date.as_deref()),
-            "equipment": clean_option(payload.equipment.as_deref()),
-        })
-        .to_string(),
-    )
-    .fetch_one(pool)
+    .bind(details.to_string())
+    .fetch_one(&mut *transaction)
     .await?;
-    Ok(format!("SAP-{id:06}"))
+    let reference = format!("SAP-{id:06}");
+    let (work_id,): (i64,) = sqlx::query_as(
+        "INSERT INTO work_items (source_contact_id, kind, title, customer_name, customer_email, customer_phone, description, details) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
+    )
+    .bind(id)
+    .bind(&payload.service)
+    .bind(format!("Demande {} {reference}", payload.service))
+    .bind(payload.name.trim())
+    .bind(payload.email.trim())
+    .bind(clean_option(payload.phone.as_deref()))
+    .bind(payload.message.trim())
+    .bind(details)
+    .fetch_one(&mut *transaction)
+    .await?;
+    sqlx::query("INSERT INTO work_events (work_item_id, action, new_status) VALUES ($1, 'demande_recue', 'nouveau')")
+        .bind(work_id)
+        .execute(&mut *transaction)
+        .await?;
+    transaction.commit().await?;
+    Ok(reference)
 }
 
 fn clean_option(value: Option<&str>) -> Option<&str> {

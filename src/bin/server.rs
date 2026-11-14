@@ -1,4 +1,9 @@
-use actix_web::{App, HttpRequest, HttpResponse, HttpServer, Responder, web};
+use actix_session::{SessionMiddleware, storage::CookieSessionStore};
+use actix_web::{
+    App, HttpRequest, HttpResponse, HttpServer, Responder,
+    cookie::{Key, SameSite},
+    web,
+};
 use leptos::prelude::*;
 use saptrans::{Language, Page, Site};
 use serde::Deserialize;
@@ -26,7 +31,7 @@ async fn health() -> impl Responder {
 async fn robots() -> impl Responder {
     HttpResponse::Ok()
         .content_type("text/plain; charset=utf-8")
-        .body("User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /admin\nSitemap: https://saptrans.net/sitemap.xml\n")
+        .body("User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /admin\nDisallow: /espace\nSitemap: https://saptrans.net/sitemap.xml\n")
 }
 
 async fn sitemap() -> impl Responder {
@@ -243,6 +248,16 @@ async fn main() -> std::io::Result<()> {
         )
         .init();
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL est requis");
+    let key_hex = std::env::var("SAPTRANS_SESSION_KEY_HEX")
+        .expect("SAPTRANS_SESSION_KEY_HEX est requis (openssl rand -hex 64)");
+    let key_bytes = hex::decode(key_hex).expect("clé de session hexadécimale invalide");
+    assert!(
+        key_bytes.len() >= 64,
+        "la clé de session doit contenir au moins 64 octets"
+    );
+    let session_key = Key::from(&key_bytes);
+    let cookie_secure =
+        std::env::var("SAPTRANS_COOKIE_SECURE").map_or(true, |value| value != "false");
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&database_url)
@@ -264,6 +279,14 @@ async fn main() -> std::io::Result<()> {
     tracing::info!(%addr, "SAPTRANS démarré");
     HttpServer::new(move || {
         App::new()
+            .wrap(
+                SessionMiddleware::builder(CookieSessionStore::default(), session_key.clone())
+                    .cookie_name("saptrans_session".into())
+                    .cookie_secure(cookie_secure)
+                    .cookie_same_site(SameSite::Strict)
+                    .cookie_http_only(true)
+                    .build(),
+            )
             .app_data(web::Data::new(pool.clone()))
             .app_data(web::Data::new(dev.clone()))
             .route("/health", web::get().to(health))
@@ -314,6 +337,7 @@ async fn main() -> std::io::Result<()> {
             .route("/brand/partners/{filename}", web::get().to(partner_logo))
             .service(web::scope("/api").configure(saptrans::contact::routes))
             .configure(saptrans::contact::form_routes)
+            .configure(saptrans::admin::routes)
             .default_service(web::get().to(page))
     })
     .bind(addr)?

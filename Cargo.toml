@@ -12,9 +12,14 @@ name = "saptrans-server"
 path = "src/bin/server.rs"
 required-features = ["ssr"]
 
+[[bin]]
+name = "saptrans-member"
+path = "src/bin/member.rs"
+required-features = ["ssr"]
+
 [features]
 default = ["ssr"]
-ssr = ["leptos/ssr", "dep:actix-web", "dep:sqlx", "dep:validator", "dep:lettre", "dep:tracing", "dep:tracing-subscriber"]
+ssr = ["leptos/ssr", "dep:actix-web", "dep:actix-session", "dep:argon2", "dep:rand", "dep:hex", "dep:sqlx", "dep:validator", "dep:lettre", "dep:tracing", "dep:tracing-subscriber"]
 hydrate = ["leptos/hydrate"]
 
 [dependencies]
@@ -22,6 +27,10 @@ leptos = { version = "0.8.23", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 actix-web = { version = "4.12", optional = true }
+actix-session = { version = "0.11", features = ["cookie-session"], optional = true }
+argon2 = { version = "0.6", features = ["getrandom"], optional = true }
+rand = { version = "0.8", optional = true }
+hex = { version = "0.4", optional = true }
 sqlx = { version = "0.8", features = ["runtime-tokio", "postgres", "migrate", "uuid"], optional = true }
 validator = { version = "0.20", features = ["derive"], optional = true }
 lettre = { version = "0.11", default-features = false, features = ["smtp-transport", "tokio1", "tokio1-rustls-tls", "builder"], optional = true }
