@@ -19,7 +19,7 @@ required-features = ["ssr"]
 
 [features]
 default = ["ssr"]
-ssr = ["leptos/ssr", "dep:actix-web", "dep:actix-session", "dep:argon2", "dep:rand", "dep:hex", "dep:sqlx", "dep:validator", "dep:lettre", "dep:tracing", "dep:tracing-subscriber"]
+ssr = ["leptos/ssr", "dep:actix-web", "dep:actix-session", "dep:argon2", "dep:rand", "dep:hex", "dep:sqlx", "dep:validator", "dep:lettre", "dep:tracing", "dep:tracing-subscriber", "dep:dotenvy", "dep:rpassword"]
 hydrate = ["leptos/hydrate"]
 
 [dependencies]
@@ -31,6 +31,8 @@ actix-session = { version = "0.11", features = ["cookie-session"], optional = tr
 argon2 = { version = "0.6", features = ["getrandom"], optional = true }
 rand = { version = "0.8", optional = true }
 hex = { version = "0.4", optional = true }
+dotenvy = { version = "0.15", optional = true }
+rpassword = { version = "7.5", optional = true }
 sqlx = { version = "0.8", features = ["runtime-tokio", "postgres", "migrate", "uuid"], optional = true }
 validator = { version = "0.20", features = ["derive"], optional = true }
 lettre = { version = "0.11", default-features = false, features = ["smtp-transport", "tokio1", "tokio1-rustls-tls", "builder"], optional = true }

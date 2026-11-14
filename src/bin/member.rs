@@ -1,9 +1,11 @@
 use argon2::{Argon2, PasswordHasher};
 use sqlx::postgres::PgPoolOptions;
-use std::io::{self, Write};
 
 #[actix_web::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Le même fichier de configuration que ./dev.sh est chargé sans écraser
+    // les variables déjà fournies par le shell ou le conteneur.
+    let _ = dotenvy::dotenv();
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 5 || args[1] != "create" {
         eprintln!("Usage: cargo run --bin saptrans-member -- create EMAIL ROLE NOM CENTRE");
@@ -36,24 +38,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     {
         return Err("Paramètres de compte invalides".into());
     }
-    print!("Mot de passe (20 caractères minimum) : ");
-    io::stdout().flush()?;
-    let mut password = String::new();
-    io::stdin().read_line(&mut password)?;
-    let password = password.trim_end_matches(['\r', '\n']);
-    if password.chars().count() < 20 || password.len() > 1024 {
-        return Err("Le mot de passe doit contenir de 20 à 1024 caractères".into());
-    }
+    let database_url = std::env::var("DATABASE_URL")
+        .map_err(|_| "DATABASE_URL manque. Configurez .env à la racine du projet.")?;
+    let pool = PgPoolOptions::new()
+        .max_connections(1)
+        .connect(&database_url)
+        .await?;
+    sqlx::migrate!().run(&pool).await?;
+    let password = loop {
+        let password = rpassword::prompt_password("Mot de passe (20 caractères minimum) : ")?;
+        if password.chars().count() >= 20 && password.len() <= 1024 {
+            break password;
+        }
+        eprintln!("Le mot de passe doit contenir de 20 à 1024 caractères. Réessayez.");
+    };
     let hash = Argon2::default()
         .hash_password(password.as_bytes())?
         .to_string();
-    let pool = PgPoolOptions::new()
-        .max_connections(1)
-        .connect(&std::env::var("DATABASE_URL")?)
-        .await?;
-    sqlx::migrate!().run(&pool).await?;
     sqlx::query("INSERT INTO admin_users (email, password_hash, display_name, role, center) VALUES ($1, $2, $3, $4, $5)")
         .bind(email).bind(hash).bind(name).bind(role).bind(center).execute(&pool).await?;
-    println!("Compte créé.");
+    println!("Compte créé. Connectez-vous sur /espace/connexion.");
     Ok(())
 }
