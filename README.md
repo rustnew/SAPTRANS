@@ -24,6 +24,8 @@ La page d’accueil présente un hero photographique pleine largeur, quatre acc�
 
 Les pages métiers disposent d'un hero, d'une navigation interne, de prestations, d'informations issues de l'ancien site, d'un parcours de demande et d'une FAQ. L'entreprise, les implantations, les secteurs, les réalisations, les actualités et le contact ont chacun une composition adaptée. [Le plan des pages et des transitions](docs/pages-and-motion.md) décrit les modèles, les interactions et les contenus restant à valider.
 
+Le [parcours de numérisation des visites AutoRelax](docs/autorelax-process.md) décrit les étapes, les rôles, les preuves à conserver et les règles de traçabilité du futur espace membre. Il distingue le dossier opérationnel interne des documents officiels du contrôle technique.
+
 ## Démarrer
 
 Pour consulter les maquettes sans Docker ni base de données : `./preview.sh`, puis ouvrir `http://localhost:3000`. Le script surveille les fichiers Rust, CSS et SVG, recompile si nécessaire et recharge le navigateur. Cette prévisualisation sert uniquement les pages publiques ; le formulaire ne peut pas enregistrer de message.
