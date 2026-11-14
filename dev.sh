@@ -14,10 +14,14 @@ if [ -z "${DATABASE_URL:-}" ]; then
   exit 1
 fi
 
-if command -v pg_isready >/dev/null 2>&1 && ! pg_isready -h localhost -p 5432 -q; then
-  echo "PostgreSQL ne répond pas sur localhost:5432. Démarrez-le avec : sudo pg_ctlcluster 16 main start" >&2
-  exit 1
+# Une clé locale éphémère suffit pendant une session de développement.
+# La production exige toujours une clé stable fournie dans l'environnement.
+if [ -z "${SAPTRANS_SESSION_KEY_HEX:-}" ]; then
+  SAPTRANS_SESSION_KEY_HEX=$(python3 -c 'import secrets; print(secrets.token_hex(64))')
+  echo "Clé de session locale générée pour cette session de développement."
 fi
+SAPTRANS_COOKIE_SECURE=${SAPTRANS_COOKIE_SECURE:-false}
+export SAPTRANS_SESSION_KEY_HEX SAPTRANS_COOKIE_SECURE
 
 # Réduit la pression mémoire et évite le SIGSEGV de rustc observé sur js-sys.
 CARGO_BUILD_JOBS=${CARGO_BUILD_JOBS:-1}

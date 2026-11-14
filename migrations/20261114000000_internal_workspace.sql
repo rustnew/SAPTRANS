@@ -45,14 +45,6 @@ CREATE TABLE work_events (
 
 CREATE INDEX work_events_item_idx ON work_events(work_item_id, recorded_at, id);
 
-CREATE TABLE member_login_failures (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    email VARCHAR(320) NOT NULL,
-    attempted_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE INDEX member_login_failures_email_time_idx ON member_login_failures(email, attempted_at DESC);
-
 INSERT INTO work_items (source_contact_id, kind, title, customer_name, customer_email, description, details, created_at, updated_at)
 SELECT id, service, 'Demande ' || service || ' SAP-' || lpad(id::text, 6, '0'), name, email, message,
        jsonb_build_object('contact_details', details), created_at, created_at
